@@ -1,4 +1,4 @@
-part of 'fetch_data_cubit.dart';
+part of 'home_cubit.dart';
 
 @immutable
 abstract class FetchDataState {}

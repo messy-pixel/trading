@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tempt/models/models.dart';
+import 'package:tempt/modules/home/repo/home_repo.dart';
 import 'package:tempt/utils/utils.dart';
-import 'package:archive/archive.dart';
 import '../../../consts/consts.dart';
 import '../../../consts/date_time_consts.dart';
 import '../../../consts/string_consts.dart';
@@ -33,7 +33,7 @@ import '../../../consts/string_consts.dart';
 ///@since 17/01/24
 ///
 
-part 'fetch_data_state.dart';
+part 'home_state.dart';
 
 class FetchDataCubit extends Cubit<FetchDataState> {
   FetchDataCubit() : super(FetchDataInitialState());
@@ -76,7 +76,8 @@ class FetchDataCubit extends Cubit<FetchDataState> {
 
       // Fetching data from the links and converting them in their
       // respective data models.
-      final List<List<dynamic>> dataSets = await _fetchFileData(links);
+      final List<List<dynamic>> dataSets =
+          await HomeRepo.fetchData(links: links);
 
       // If all the data is empty means some error occurred
       // than skipping that day.
@@ -132,49 +133,6 @@ class FetchDataCubit extends Cubit<FetchDataState> {
     link2FileDate = formattedDate2;
 
     return [l1, l2, l3, l3Name];
-  }
-
-  /// Downloads the filesData from the given links.
-  Future<List<List<dynamic>>> _fetchFileData(List<String> links) async {
-    final List<ModelOne> dataSet1 = [];
-    final List<ModelTwo> dataSet2 = [];
-    final List<ModelThree> dataSet3 = [];
-    try {
-      for (int i = 0; i < 3; i++) {
-        // Fetching the data.
-        Response res = await dio.get(
-          links[i],
-          // Requesting data as List of integer.
-          options: i == 2
-              ? Options(
-                  responseType: ResponseType.bytes,
-                  followRedirects: false,
-                  validateStatus: (s) => (s ?? 0) < 500)
-              : null,
-        );
-
-        if (i == 0) {
-          dataSet1.addAll(
-              await _convertCsvDataToDms(csvData: res.data, t: ModelOne()));
-        } else if (i == 1) {
-          dataSet2.addAll(
-              await _convertCsvDataToDms(csvData: res.data, t: ModelTwo()));
-        } else {
-          // Extract zip contents.
-          final Archive archive = ZipDecoder().decodeBytes(res.data);
-          // Finding the csv file within the zip archive.
-          final ArchiveFile? archiveFile = archive.findFile(links[3]);
-          // Save the csv file locally.
-          dataSet3.addAll(await _convertCsvDataToDms<ModelThree>(
-              csvData: String.fromCharCodes(archiveFile?.content),
-              t: ModelThree()));
-        }
-      }
-      return [dataSet1, dataSet2, dataSet3];
-    } catch (e) {
-      // Returning empty lists if some error occured.
-      return [[], [], []];
-    }
   }
 
   /// Produces the final data set from the data
@@ -335,33 +293,6 @@ class FetchDataCubit extends Cubit<FetchDataState> {
     for (final FinalDataModel e in datasets) {
       AppSingleton().sqLite.insert(tableName: DbConsts.finalDataSet, data: e);
     }
-  }
-
-  /// Converts the csv data fetched from the severs to the
-  /// consecutive data models.
-  Future<List<T>> _convertCsvDataToDms<T extends CsvConvertible>(
-      {required String csvData, required T t}) async {
-    List<String> data = [];
-
-    data = csvData
-        .replaceAll('"', '')
-        .replaceAll('\n', t is ModelThree ? '' : ',')
-        .split(',')
-        .toList();
-
-    // Skipping the leading five values if model is ModelTwo.
-    if (t is ModelTwo) data.removeRange(0, 4);
-
-    final List<T> dms = [];
-
-    // No of parameter in the model.
-    final int n = t.noOfParameters();
-
-    for (int i = n; i < data.length && (i + n) < data.length; i += n) {
-      dms.add(t.fromCsv(data.sublist(i, i + n)));
-    }
-
-    return dms;
   }
 
   /// Deletes the Zip file from local storage.

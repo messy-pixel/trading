@@ -5,6 +5,8 @@ import 'package:flutter_common_utils/flutter_common_utils.dart';
 import '../../utils/route_generator.dart';
 import 'setup_cubit/setup_cubit.dart';
 
+/// [Setup] Page perform operation which are required
+/// to be done before stating the app.
 class Setup extends StatefulWidget {
   const Setup({super.key});
 
