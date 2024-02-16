@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tempt/consts/theme_consts.dart';
 import 'package:tempt/utils/route_generator.dart';
 
+/// Main function.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());

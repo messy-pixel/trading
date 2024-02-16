@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_common_utils/flutter_common_utils.dart';
 import 'package:tempt/modules/setup/setup.dart';
 
-import '../modules/home_screen/home_screen.dart';
+import '../modules/home/home.dart';
 
 ///Meditab Software Inc. CONFIDENTIAL
 ///__________________
@@ -54,7 +54,7 @@ class RouteGenerator {
         break;
       // Home screen route.
       case ConstRoutes.homeScreen:
-        page = const HomeScreen();
+        page = const Home();
         break;
 
       // Default case when the requested route is not found.
