@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempt/consts/icon_consts.dart';
-import 'package:tempt/modules/home_screen/widget/home_content.dart';
-import 'package:tempt/modules/home_screen/widget/loading.dart';
+import 'package:tempt/modules/home/widget/home_content.dart';
+import 'package:tempt/modules/home/widget/loading.dart';
 import 'package:tempt/utils/utils.dart';
 
-import 'cubit/fetch_data_cubit.dart';
+import 'cubit/home_cubit.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+export 'widget/home_content.dart';
+export 'widget/loading.dart';
+export 'widget/stock_tile.dart';
+export 'cubit/home_cubit.dart';
+
+/// [Home] is the main page of the application.
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeState extends State<Home> {
   /// Cubit to fetch data from the severs
   /// and saving and retrieving from local database.
   late final FetchDataCubit _cubit;
@@ -63,5 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Callback when the refers icon is clicked.
   void _onRefreshTap() => _cubit.logic();
 }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempt/base/base_error.dart';
 import 'package:tempt/consts/date_time_consts.dart';
 import 'package:tempt/consts/string_consts.dart';
-import 'package:tempt/modules/home_screen/cubit/fetch_data_cubit.dart';
 import 'package:tempt/utils/utils.dart';
 import 'package:tempt/utils/widget_exntesion.dart';
 
